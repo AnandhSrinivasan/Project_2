@@ -1,12 +1,16 @@
 package Step_Def;
 
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
+//import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.cucumber.java.en.And;
@@ -44,5 +48,45 @@ public class Country_BB {
 		System.out.println(clickacc.getText());
 	}
 
+         //Given URL 
+		 String urlToCheck = "https://www.bestbuy.com";
+
+		 // Navigate to the URL
+		 driver.get(urlToCheck);
+		 List<WebElement> links = driver.findElements(By.tagName("a"));
+ 
+		 System.out.println("Total links on the page: " + links.size());
+ 
+		 // Iterate through each link and check if it broken
+		 for (WebElement link : links) {
+			 String href = link.getAttribute("href");
+			 if (href != null && !href.isEmpty()) {
+				 // Check if the URL is valid
+				 if (isLinkBroken(new URL(href))) {
+					 System.out.println("Broken Link: " + href);
+				 } else {
+					 System.out.println("Valid Link: " + href);
+				 }
+			 }
+		 }
+ 
+		 
+	 }
+ 
+	 // Function to check if a link is broken
+	 public static boolean isLinkBroken(URL url) {
+		 try {
+			 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			 connection.connect();
+			 int responseCode = connection.getResponseCode();
+			 connection.disconnect();
+			 return (responseCode >= 400);
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 return true;
+		 }
+	 }
+	 
+ 
 
 }
